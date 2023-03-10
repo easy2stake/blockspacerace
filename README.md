@@ -4,6 +4,7 @@
 
 
 **How to run**
+
 Make sure you are in the home directory where celestia-appd is installed then:
 ```sh
 git clone https://github.com/easy2stake/blockspacerace
