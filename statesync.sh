@@ -31,10 +31,10 @@ else
   exit 1
 fi
 
-read -p 'We need the [path | name] of the tendermint binary [default: celestia-appd]: ' pname
+read -p '1. We need the [path | name] of the tendermint binary [default: celestia-appd]: ' pname
 pname=${pname:-celestia-appd}
 
-read -p 'What RPC server do you want to use for statesync? (URL or Public IP & port) [default: http://celrace-sync.easy2stake.com:80]: ' ss_rpc
+read -p '2. What RPC server do you want to use for statesync? (URL or Public IP & port) [default: http://celrace-sync.easy2stake.com:80]: ' ss_rpc
 ss_rpc=${ss_rpc:-http://celrace-sync.easy2stake.com:80}
 
 # Generating the p2p id based on the used RPC
@@ -45,7 +45,7 @@ port=$(jq '.result.node_info.listen_addr | split(":")[2]' -r <<< $res)
 ip=$(echo $url | sed -e 's/.*\/\/\([^\/]*\).*/\1/' | cut -d ":" -f 1)
 p2p_id="$id@$ip:$port"
 
-read -p 'Home path where data & config folders are placed  [default: $HOME/.celestia-app/]: ' homedir
+read -p '3. Home path where data & config folders are placed  [default: $HOME/.celestia-app/]: ' homedir
 homedir=${homedir:-$HOME/.celestia-app}
 
 latest_block=$(curl -s $ss_rpc/block | jq -r .result.block.header.height); \
