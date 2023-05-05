@@ -8,7 +8,7 @@
 
 
 ## Utility Scrips
-### 1. Tendermint State Sync
+### 1. Tendermint State Sync - Configure statesync instantly in 3 simple steps. No headackes !
 
 **Quickly setup any tendermint based chain with State Sync. Useful when:**
 - you run out of space on a node
