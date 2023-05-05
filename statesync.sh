@@ -22,7 +22,7 @@ else
 fi
 echo ''
 
-read -p '!!!! ATTENTION !!!! -> ALL BLOCKCHAIN DATA WILL BE DELETED. Proceed? [default: n]: ' agree2
+read -p '!!!! ATTENTION !!!! -> ALL BLOCKCHAIN DATA WILL BE DELETED. Proceed[y/n]? [default: n]: ' agree2
 agree2=${agree2:-n}
 if [ $agree2 = 'y' ]; then
   echo "You chosed to continue. Your data folder will be removed !"
