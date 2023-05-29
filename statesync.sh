@@ -45,8 +45,10 @@ port=$(jq '.result.node_info.listen_addr | split(":")[2]' -r <<< $res)
 ip=$(echo $url | sed -e 's/.*\/\/\([^\/]*\).*/\1/' | cut -d ":" -f 1)
 p2p_id="$id@$ip:$port"
 
-read -p '3. Home path where data & config folders are placed  [default: $HOME/.celestia-app/]: ' homedir
+read -p '3. Home path where data & config folders are placed  [default: $HOME/.celestia-app]: ' homedir
 homedir=${homedir:-$HOME/.celestia-app}
+
+$pname tendermint unsafe-reset-all --home $homedir --keep-addr-book
 
 latest_block=$(curl -s $ss_rpc/block | jq -r .result.block.header.height); \
 trust_block=$((latest_block - 2000)); \
@@ -61,6 +63,27 @@ awk -v SS=$ss_rpc -v TB=$trust_block -v TH="$trust_hash" \
      1' $homedir/config/config.toml > $homedir/config/config.toml.bak && \
 mv $homedir/config/config.toml.bak $homedir/config/config.toml
 
+genesis_presence=$(ls $homedir/config/genesis.json)
+echo "Genesis file: $genesis_presence"
+if [ -z $genesis_presence ]; then
+        read -p 'Genesis file not found in $homedir/config/genesis.json. Would you like to download it[y/n]? [default: n] ' download
+        download=${download:-n}
+        if [ $download = 'y' ]; then
+                curl $ss_rpc/genesis | jq '.result.genesis' > $homedir/config/genesis.json
+                echo '''
+
+Genesis Downloaded
+
+                '''
+        else
+                echo '''
+
+Ok, will not download genesis file.
+
+                '''
+        fi
+fi
+
 # Adding the persistent peer to config.
 pp=$(cat $homedir/config/config.toml | grep "persistent_peers " | cut -d "\"" -f 2)
 if [ -z "$pp" ]; then
@@ -72,6 +95,5 @@ sed -i 's/persistent_peers *= *"[^"]*"/persistent_peers = "'"$pp"'"/' $homedir/c
 
 echo "Saving addresbook, in case --keep-addr-book flag does not work! File is saved saved in $homedir/config/addrbook.json.bak. Feel free to delete the backup file if you don't need it"
 cp $homedir/config/addrbook.json $homedir/config/addrbook.json.bak
-$pname tendermint unsafe-reset-all --home $homedir --keep-addr-book
 
 echo 'Done!'
